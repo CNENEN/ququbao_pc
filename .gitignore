@@ -1,0 +1,6 @@
+/node_modules
+/app/node_modules
+/app/.vs
+/cache
+/package-lock.json
+/app/package-lock.json

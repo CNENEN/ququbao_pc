@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <link type="text/css" href="../assets/css/common.css" rel="stylesheet" />
+    <link type="text/css" href="../assets/scripts/Loading/style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <script type="text/javascript" src="../assets/scripts/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../assets/scripts/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../assets/scripts/Loading/script.js"></script>
+    <script type="text/javascript" src="../assets/layout.js"></script>
+    <script type="text/javascript">
+        gotoLogin({
+            status: AppUtils.Request("status") || '',
+            msg: AppUtils.Request("msg")
+        });
+    </script>
+</body>
+
+</html>

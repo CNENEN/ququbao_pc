@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <link type="text/css" href="../assets/css/common.css" rel="stylesheet" />
+    <link type="text/css" href="../assets/scripts/Loading/style.css" rel="stylesheet" />
+</head>
+
+<body style="background:#f5f5f5">
+    <div id="titlebar" class="bar1">
+        <span class="tname1">蛐蛐宝</span>
+        <span class="testname"></span>
+        <span class="t_sp">
+            <a id="titlebar_min" class="min1 nodrag"></a>
+            <a id="titlebar_close" class="close1 nodrag"></a>
+        </span>
+    </div>
+    <div id="divPwd" class="paddinglr20">
+        <p class="aligncenter margintop30"><img src="../assets/images/qu_96.png" class="p_logo" /></p>
+        <p class="margintop5"><input type="text" id="txtUserName4Pwd" class="p_input" placeholder="账号/手机号" /></p>
+        <p><input type="password" id="txtPassword4Pwd" class="p_input" placeholder="密码" /></p>
+        <p class="height40li"><input type="checkbox" id="chkRememberPwd" class="" checked="checked" /><label for="chkRememberPwd" class="p_savePwd">记住密码</label></p>
+        <p class="margintop5"><a id="btnLoginByPwd" class="btn1a">登&nbsp;&nbsp;&nbsp;&nbsp;录</a></p>
+        <!--账号密码未填：btn1a，已填：btn1-->
+        <p class="margintop15 aligncenter"><a data-toggle-login="sms" class="fontcolor666 curr">短信验证码登录</a></p>
+    </div>
+    <div id="divSms" class="paddinglr20" style="display:none;">
+        <p class="aligncenter margintop30"><img src="../assets/images/qu_96.png" class="p_logo" /></p>
+        <p class="margintop5"><input type="text" id="txtUserName4Sms" class="p_input" placeholder="手机号" maxlength="11" /></p>
+        <p>
+            <input type="text" id="txtSmsCode4Sms" class="p_input" placeholder="验证码" />
+            <a data-smschannel="1" class="s_getSMS">获取验证码</a>
+        </p>
+        <p class="aligncenter height40li">
+            <label class="fontcolor999">收不到验证码？试试 <a data-smschannel="2"  class="fontcolor008def curr">语音验证码</a></label>
+            <label data-countdown="2" class="fontcolor999 fontsize_8em" style="display:none;"></label>
+        </p>
+        <p class="margintop5"><a id="btnLoginBySms" class="btn1a">登&nbsp;&nbsp;&nbsp;&nbsp;录</a></p>
+        <!--账号密码未填：btn1a，已填：btn1-->
+        <p class="margintop15 aligncenter"><a data-toggle-login="pwd" class="fontcolor666 curr">密码登录</a></p>
+    </div>
+    <div id="divApiUrls" class="paddinglr20" style="display:none;">
+        <p class="aligncenter margintop10 fontsize16 bottomBorder2 height50li">服务端API地址</p>
+        <p class="aligncenter fontsize16 height50li"><select id="cmbApiUrls" style="width:100%;padding:5px;"></select></p>
+        <div style="overflow:auto; height:220px;">
+            <input type="text" id="txtApiKey" class="p_input" placeholder="API描述" />
+            <input type="text" id="txtApiUrl" class="p_input" placeholder="API地址" />
+        </div>
+        <p class="button_bottom"><a id="btnSelectApi" class="btn1 js_update">确定</a></p>
+    </div>
+    <script type="text/javascript" src="../assets/scripts/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../assets/scripts/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../assets/scripts/md5.js"></script>
+    <script type="text/javascript" src="../assets/scripts/Loading/script.js"></script>
+    <script type="text/javascript" src="../assets/layout.js"></script>
+    <script type="text/javascript" src="../assets/login.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            bindElementEvent4Login();
+        });
+    </script>
+    <script type="text/javascript">
+        function showApiUrls() {
+            var html = [], api, customApi = true;
+            for (var i = 0; i < AppSettings.apiUrls.length; i++) {
+                api = AppSettings.apiUrls[i];
+                if (api["key"] == _ApiUrl["key"]) {
+                    customApi = false;
+                    html.push('<option selected="selected">' + api.key + '</option>');
+                }
+                else {
+                    html.push('<option>' + api.key + '</option>');
+                }
+            }
+            if (customApi) html.splice(0, 0, '<option>[自定义API]</option>');
+
+            $("#cmbApiUrls").html(html.join('')).off("change").on("change", function () {
+                var key = $(this).val(), api;
+                for (var i = 0; i < AppSettings.apiUrls.length; i++) {
+                    api = AppSettings.apiUrls[i];
+                    if (api["key"] == key) {
+                        $("#txtApiKey").val(api.key);
+                        $("#txtApiUrl").val(api.url);
+                        break;
+                    }
+                }
+            });
+
+            $("#btnSelectApi").off("click").on("click", function () {
+                _ApiUrl.key = $.trim($("#txtApiKey").val());
+                _ApiUrl.url = $.trim($("#txtApiUrl").val());
+                ApiClient.SetServerHost(_ApiUrl.url);
+                $.cookie(_ApiUrlCookieName, JSON.stringify(_ApiUrl), { "path": "/", expires: 7 });
+
+                $('.testname').text(_ApiUrl.key == "production" ? '' : '[' + _ApiUrl.key + ']');
+                $("#divApiUrls").hide();
+                $("#divPwd").show();
+            });
+
+            $("#txtApiKey").val(_ApiUrl.key);
+            $("#txtApiUrl").val(_ApiUrl.url);
+            $("#divPwd,#divSms").hide();
+            $("#divApiUrls").show();
+        }
+    </script>
+</body>
+
+</html>

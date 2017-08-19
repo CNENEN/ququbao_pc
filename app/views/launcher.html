@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <link type="text/css" href="../assets/css/common.css" rel="stylesheet" />
+    <link type="text/css" href="../assets/scripts/Loading/style.css" rel="stylesheet" />
+</head>
+
+<body style="background:#f5f5f5">
+    <!--顶部bar-->
+    <div id="titlebar" class="bar1">
+        <span class="tname1" style="display:none;">蛐蛐宝</span>
+        <span class="t_sp">
+            <a id="titlebar_min" class="min1 nodrag"></a>
+            <a id="titlebar_close" class="close1 nodrag"></a>
+        </span>
+    </div>
+    <!--程序启动-->
+    <div class="paddinglr20" id="divStart">
+        <p class="margintop50 aligncenter"><span class="s_logo">蛐蛐宝</span></p>
+        <p class="margintop30 aligncenter height50li fontsize16">让天下没有难收的账款</p>
+        <p class="margintop30 aligncenter fontcolor666"><span class="s_logining">系统启动中</span></p>
+    </div>
+    <!--版本检测-->
+    <div class="paddinglr20" id="divVersion" style="display:none;">
+        <p class="aligncenter margintop10 fontsize16 bottomBorder2 height50li">发现新版本&nbsp;&nbsp;v2.2.2</p>
+        <div style="overflow:auto; height:220px;">
+            <p class="alignleft margintop10 fontcolor666">1、交互优化</p>
+            <p class="alignleft margintop5 fontcolor666">2、新增牛B功能</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+            <p class="alignleft margintop5 fontcolor666">3、加入各种不知明机制</p>
+        </div>
+        <p class="button_bottom"><a class="btn1 js_update">立即升级</a></p>
+    </div>
+    <!--版本检测（升级）-->
+    <div class="paddinglr20" id="divVersionUpdate" style="display:none;">
+        <p class="aligncenter margintop50 fontsize16 height50li">下载安装包</p>
+        <p class="aligncenter margintop10">
+            <span class="v_update"><span class="v_Progress">&nbsp;</span></span>
+        </p>
+        <p class="aligncenter"><label id="v_value">0</label></p>
+
+    </div>
+    <!--版本检测（升级/下载完成）-->
+    <div class="paddinglr20" id="divVersionUpdate1" style="display:none;">
+        <p class="aligncenter margintop50"><img src="../assets/images/payopen_2.png" class="v_done" /></p>
+        <p class="aligncenter height40li">下载完成</p>
+        <p class="margintop40"><a class="btn1 js_update1">立即更新</a></p>
+    </div>
+    <script type="text/javascript" src="../assets/scripts/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../assets/scripts/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../assets/scripts/Loading/script.js"></script>
+    <script type="text/javascript" src="../assets/layout.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            win.show();
+
+            //启动程序
+            setTimeout(function () {
+                checkLogin();
+            }, 3000);
+
+            //点击升级
+            $(".js_update").click(function () {
+                $("#divVersion").hide();
+                $("#divVersionUpdate").show(function () {
+                    doUpdate()
+                });
+            })
+
+            //点击更新
+            $(".js_update1").click(function () {
+                checkLogin();
+            })
+        });
+
+        function checkLogin() {
+            loginByToken(function (e) {
+                if (e && e.status == 1) {
+                    gotoMain();
+                }
+                else {
+                    gotoLogin(e);
+                }
+            });
+        }
+        function doUpdate() {
+            var downTimer = setInterval(function () {
+                if (_progress <= 90) {
+                    _progress++;
+                    $(".v_Progress").css("width", _progress + "%");
+                    $("#v_value").html(_progress + "%");
+                } else {
+                    clearInterval(downTimer);
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

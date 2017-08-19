@@ -1,0 +1,30 @@
+1.download node.js. see https://nodejs.org/zh-cn/
+2.install grunt
+    npm install grunt --g
+3.install webpack. 
+    npm install webpack --g
+
+4.install node_modules for grunt project
+    npm install
+5.cd app
+6.install node_modules for vue project
+    npm install
+
+7.build webpack
+    dev: npm run dev
+    pro: npm run build
+8.cd..
+9.create nwjs app
+    grunt nwjs
+
+10.Inno Step Compiler
+    setup.iss
+
+11.over
+
+
+
+ps. To disable the DevTools you can use chromium args in your package.json as demonstrated below:
+{
+    "chromium-args": "--disable-devtools"
+}
