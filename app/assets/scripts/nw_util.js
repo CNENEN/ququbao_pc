@@ -81,11 +81,11 @@
     
         // 标题
         win.title = '蛐蛐宝';
-    
+        win.show();
         // 创建托盘
         if (!process.mainModule.exports.backgroundWindow) {
-            gui.Window.open('tray.html', {
-                "show": true
+            gui.Window.open('../views/tray.html', {
+                "show": false
             }, function (backgroudWin) {
                 process.mainModule.exports.backgroundWindow = backgroudWin;
             });
