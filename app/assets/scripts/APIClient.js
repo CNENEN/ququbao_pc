@@ -1,5 +1,4 @@
-var $ = require('./jquery-1.11.2.min.js');
-var AppUtils = require("./AppUtils.js");
+import AppUtils from "./AppUtils.js"
 
 /*
  * 公共接口调用方法，基于jQuery.js
@@ -45,18 +44,18 @@ var _userId = null; // 用户编号
 
 // 遮罩层对象
 var _mask = {
-    show: function () { },
-    hide: function () { }
+    show: AppUtils.Dialog.ShowLoading,
+    hide: AppUtils.Dialog.HideLoading
 };
 
 // 提示弹窗
 var _dialog = {
-    alert: function (message) { alert(message); }, // 强提示信息
-    error: function (message) { alert(message); }, // 错误输出信息
-    tips: function (message) { alert(message); } // 弱提示信息
+    alert: AppUtils.Dialog.Alert, // 强提示信息
+    error: AppUtils.Dialog.Error, // 错误输出信息
+    tips: AppUtils.Dialog.Tips // 弱提示信息
 };
 
-var _client = {
+export default {
 
     /**
      * 获取设置的服务端Host
@@ -190,21 +189,20 @@ function log(message) {
  * 获取参数信息
  *  @param diffCase bool 是否区分大小写，默认为false
  */
-function getArgs(diffCase) {
+function getArgs(controller, action, data, success, error, complete, async, encrypt, loading, diffCase) {
     diffCase = typeof diffCase === "boolen" ? diffCase : false;
 
-    var caller = arguments.callee.caller;//获取调用函数
-    if (caller == null || caller.arguments.length == 0)
+    var result = {};
+
+    if (!controller)
         return result;
 
     // 压缩js后函数参数名称会变化，所以这里写死参数名
     // var argArray = AppUtils.GetArgumentNamesOfFunction(caller);
     var argArray = ["controller", "action", "data", "success", "error", "complete", "async", "encrypt", "loading"];
 
-    var result = {};
-
-    var params = caller.arguments[0];//获取参数对象
-    var index = typeof (params) == "object" ? 1 : 0;//是否是对象，是对象返回赋值索引1
+    var params = controller;//获取参数对象
+    var index = typeof (params) === "object" ? 1 : 0;//是否是对象，是对象返回赋值索引1
     if (index == 1) {
         for (var p in params) {
             for (var i = 0; i < argArray.length; i++) {
@@ -224,9 +222,15 @@ function getArgs(diffCase) {
         }
     }
     else {
-        for (var i = index; i < argArray.length && i < caller.arguments.length; i++) {
-            result[AppUtils.Trim(argArray[i])] = caller.arguments[i];
-        }
+        result['controller'] = controller;
+        result['action'] = action;
+        result['data'] = data;
+        result['success'] = success;
+        result['error'] = error;
+        result['complete'] = complete;
+        result['async'] = async;
+        result['encrypt'] = encrypt;
+        result['loading'] = loading;
     }
 
     return result;
@@ -252,12 +256,12 @@ function encryptRequest(args, callback) {
     args.token = args.token || _token || null;
     args.data = args.data || { "__timestamp__": new Date().getTime() };
 
-    if (!args.token || !args.encrypt || typeof _client.window.AppEvent_EncryptRequest != "function") {
+    if (!args.token || !args.encrypt || typeof window.AppEvent_EncryptRequest != "function") {
         callback(args.data);
         return;
     }
 
-    _client.window.AppEvent_EncryptRequest(args.token, _userId, args.data, callback);
+    window.AppEvent_EncryptRequest(args.token, _userId, args.data, callback);
 }
 
 // 调用APP解密函数对请求响应进行解密
@@ -265,12 +269,12 @@ function decryptResponse(args, e, callback) {
     e = checkDuplicateLogin(e);
     if (!e) return;
 
-    if (!args.token || !args.encrypt || typeof _client.window.AppEvent_DecryptResponse != "function") {
+    if (!args.token || !args.encrypt || typeof window.AppEvent_DecryptResponse != "function") {
         callback(e.data);
         return;
     }
 
-    _client.window.AppEvent_DecryptResponse(args.token, _userId, e.data, callback);
+    window.AppEvent_DecryptResponse(args.token, _userId, e.data, callback);
 }
 
 // 未登录或用户信息异常结果判定
@@ -280,10 +284,10 @@ function checkDuplicateLogin(e) {
 
     // 判断接口返回状态(未登录，或者用户信息异常)
     if (e.status == "002100" || (e.status.length == 6 && e.status.substr(0, 3) == "003")) {
-        if (typeof _client.window["AppEvent_AppDuplicateLogin"] === "function") {
-            _client.window.AppEvent_AppDuplicateLogin(e.msg);
+        if (typeof window["AppEvent_AppDuplicateLogin"] === "function") {
+            window.AppEvent_AppDuplicateLogin(e.msg);
         } else {
-            _client.window.location.href = "views/error.html?status=" + e.status + "&msg=" + encodeURIComponent(e.msg);
+            window.location.href = "error.html?status=" + e.status + "&msg=" + encodeURIComponent(e.msg);
         }
         return;
     }
@@ -293,7 +297,7 @@ function checkDuplicateLogin(e) {
 
 // 发送请求
 function request(controller, action, data, success, error, complete, async, encrypt, loading) {
-    var args = getArgs();
+    var args = getArgs(controller, action, data, success, error, complete, async, encrypt, loading);
     var url = getUrl(args.controller, args.action);
     if (!url) {
         log("请求地址异常");
@@ -345,9 +349,3 @@ function request(controller, action, data, success, error, complete, async, encr
 
     return result;
 }
-
-_client
-    .SetMask(AppUtils.Dialog.ShowLoading, AppUtils.Dialog.HideLoading)
-    .SetDialog(AppUtils.Dialog.Alert, AppUtils.Dialog.Error, AppUtils.Dialog.Tips);
-
-module.exports = _client;

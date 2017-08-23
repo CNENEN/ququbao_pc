@@ -8,7 +8,7 @@
     var gui = require('nw.gui');
 
     //var launch = require("./assets/launch.js");
-    var config = require("./assets/config.js");
+    var config = require("./assets/scripts/config.js");
     var dataPath = gui.App.dataPath;
     var cfg = config.loadConfig(dataPath);
     console.log("data path:" + dataPath);

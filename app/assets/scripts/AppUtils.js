@@ -1,9 +1,13 @@
-﻿function spliceTokenQuery(url) {
+﻿import Loading from './Loading.js'
+
+var _loading = new Loading();
+
+function spliceTokenQuery(AppUtils, url) {
     var args = ["token", "shopId", "sid", "shopSid", "userId", "terminal"];
 
     var query = {};
     for (var i = 0; i < args.length; i++) {
-        var vallue = _utils.Request(args[i]);
+        var vallue = AppUtils.Request(args[i]);
         vallue != null && (query[args[i]] = vallue);
     }
 
@@ -44,7 +48,7 @@ function spliceQueryStrings(url, query, cover) {
     return url + "?" + args.substr(1);
 }
 
-var _utils = {
+export default {
 
     Dialog: {
 
@@ -52,8 +56,8 @@ var _utils = {
          * 强提示消息
          */
         Alert: function (message, callback) {
-            if (typeof _utils.window.AppEvent_Alert === "function")
-                _utils.window.AppEvent_Alert(null, message, callback);
+            if (typeof window.AppEvent_Alert === "function")
+                window.AppEvent_Alert(null, message, callback);
             else {
                 alert(message);
                 typeof callback === "function" && callback();
@@ -64,8 +68,8 @@ var _utils = {
          * 错误提示消息
          */
         Error: function (message, callback) {
-            if (typeof _utils.window.AppEvent_Alert === "function")
-                _utils.window.AppEvent_Alert(null, message, callback);
+            if (typeof window.AppEvent_Alert === "function")
+                window.AppEvent_Alert(null, message, callback);
             else {
                 alert(message);
                 typeof callback === "function" && callback();
@@ -76,10 +80,10 @@ var _utils = {
          * 弱提示消息
          */
         Tips: function (message) {
-            if (typeof _utils.window.AppEvent_HintText === "function")
-                _utils.window.AppEvent_HintText(message);
-            else if (typeof _utils.window.alertTips === "function")
-                _utils.window.alertTips(message);
+            if (typeof window.AppEvent_HintText === "function")
+                window.AppEvent_HintText(message);
+            else if (typeof window.alertTips === "function")
+                window.alertTips(message);
             else
                 alert(message);
         },
@@ -88,8 +92,8 @@ var _utils = {
          * 确定/取消提示
          */
         OKCancel: function (message, callback) {
-            if (typeof _utils.window.AppEvent_OKCancel === "function")
-                _utils.window.AppEvent_OKCancel("", message, function (index) {
+            if (typeof window.AppEvent_OKCancel === "function")
+                window.AppEvent_OKCancel("", message, function (index) {
                     if (index > 0)
                         return;
                     typeof callback === "function" && callback(index);
@@ -104,8 +108,8 @@ var _utils = {
          * 是/否提示
          */
         YesNo: function (message, callback) {
-            if (typeof _utils.window.AppEvent_YesNo === "function")
-                _utils.window.AppEvent_YesNo("", message, function (index) {
+            if (typeof window.AppEvent_YesNo === "function")
+                window.AppEvent_YesNo("", message, function (index) {
                     if (index > 0)
                         return;
                     typeof callback === "function" && callback(index);
@@ -120,10 +124,10 @@ var _utils = {
          * 自定义提示消息
          */
         Show: function (title, text, callback, btnText, timeout, icon) {
-            if (typeof _utils.window.AppEvent_Alert === "function")
-                _utils.window.AppEvent_Alert(title, text, callback, btnText, timeout, icon);
+            if (typeof window.AppEvent_Alert === "function")
+                window.AppEvent_Alert(title, text, callback, btnText, timeout, icon);
             else {
-                alert(message);
+                alert(text);
                 typeof callback === "function" && callback();
             }
         },
@@ -132,12 +136,14 @@ var _utils = {
          * 显示遮罩层
          */
         ShowLoading: function () {
+            _loading.Show();
         },
 
         /**
          * 隐藏遮罩层
          */
         HideLoading: function () {
+            _loading.Hide();
         }
     },
 
@@ -173,7 +179,7 @@ var _utils = {
     GetRequestParameters: function () {
         var parameters = {};
 
-        var rs = decodeURI(_utils.window.location.search).substr(1);
+        var rs = decodeURI(window.location.search).substr(1);
         if (!rs) return parameters;
 
         var strs = rs.split("&");
@@ -191,7 +197,7 @@ var _utils = {
      */
     Request: function (name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-        var rs = decodeURI(_utils.window.location.search).substr(1).match(reg);
+        var rs = decodeURI(window.location.search).substr(1).match(reg);
         if (rs != null)
             return unescape(rs[2]);
 
@@ -202,15 +208,15 @@ var _utils = {
      * 页面跳转
      */
     NavigateTo: function (url) {
-        _utils.window.location = spliceTokenQuery(url);
+        window.location = spliceTokenQuery(this, url);
     },
 
     /**
      * 页面跳转（替换当前历史记录点）
      */
     HistoryReplaceState: function (url) {
-        history.replaceState(null, null, spliceTokenQuery(url));
-        _utils.window.location.reload();
+        history.replaceState(null, null, spliceTokenQuery(this, url));
+        window.location.reload();
     },
 
     /**
@@ -231,7 +237,7 @@ var _utils = {
      * 清除字符串左右两边空格，包含换行符
      */
     Trim: function (value) {
-        return _utils.TrimRight(_utils.TrimLeft(value));
+        return this.TrimRight(this.TrimLeft(value));
     },
 
     /**
@@ -253,5 +259,3 @@ var _utils = {
         return (source * multiple).toFixed(precision);
     }
 };
-
-module.exports = _utils;

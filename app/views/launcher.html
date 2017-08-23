@@ -58,17 +58,26 @@
         <p class="aligncenter height40li">下载完成</p>
         <p class="margintop40"><a class="btn1 js_update1">立即更新</a></p>
     </div>
+    <div>
+        <input type="button" id="test" value="reboot"/>
+    </div>
     <script type="text/javascript" src="../assets/scripts/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="../assets/scripts/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../assets/scripts/Loading/script.js"></script>
-    <script type="text/javascript" src="../assets/layout.js"></script>
+    <script type="text/javascript" src="../assets/scripts/nw_util.js"></script>
+    <script type="text/javascript" src="../assets/scripts/updater.js"></script>
     <script type="text/javascript">
         $(function () {
             win.show();
 
+            var upd = new updater({appName:'ququbao'});
+            $('#test').click(function(){
+                upd.reboot();
+            })
+
             //启动程序
             setTimeout(function () {
-                checkLogin();
+                console.log(upd);
+                //checkLogin();
             }, 3000);
 
             //点击升级
